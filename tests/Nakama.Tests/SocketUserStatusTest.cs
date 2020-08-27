@@ -207,25 +207,5 @@ namespace Nakama.Tests
             await socket2.CloseAsync();
             await socket3.CloseAsync();
         }
-
-        [Fact]
-        public async void UpdateStatus_NoStatus_HasStatus()
-        {
-            var id = Guid.NewGuid().ToString();
-            var session = await _client.AuthenticateCustomAsync(id);
-
-            var completer = new TaskCompletionSource<IStatusPresenceEvent>();
-            var canceller = new CancellationTokenSource();
-            canceller.Token.Register(() => completer.SetCanceled());
-            canceller.CancelAfter(Timeout);
-            _socket.ReceivedStatusPresence += statuses => completer.SetResult(statuses);
-            _socket.ReceivedError += e => completer.TrySetException(e);
-            await _socket.ConnectAsync(session);
-
-            await _socket.UpdateStatusAsync("super status change!");
-            var result = await completer.Task;
-            Assert.NotNull(result);
-            Assert.Contains(result.Joins, joined => joined.UserId.Equals(session.UserId));
-        }
     }
 }
