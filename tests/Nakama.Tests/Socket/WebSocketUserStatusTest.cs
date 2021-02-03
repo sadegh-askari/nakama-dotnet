@@ -15,6 +15,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -220,6 +222,35 @@ namespace Nakama.Tests.Socket
             var result = await completer.Task;
             Assert.NotNull(result);
             Assert.Contains(result.Joins, joined => joined.UserId.Equals(session.UserId));
+        }
+
+        [Fact]
+        public async void TestFollowMassiveNumberOfUsers()
+        {
+            const int numFollowees = 2000;
+
+            var followerId = Guid.NewGuid().ToString();
+            var followerSession = await _client.AuthenticateCustomAsync(followerId);
+
+            var authTasks = new List<Task<ISession>>();
+
+            for (int i = 0; i < numFollowees; i++)
+            {
+                var followeeId = Guid.NewGuid().ToString();
+                authTasks.Add(_client.AuthenticateCustomAsync(followeeId));
+            }
+
+            Task.WaitAll(authTasks.ToArray());
+
+            IApiUsers allFollowees = await _client.GetUsersAsync(
+                followerSession,
+                authTasks.Select<Task<ISession>, string>(task => task.Result.UserId));
+
+            var connectTasks = new List<Task>();
+
+            IStatus statuses = await _socket.FollowUsersAsync(allFollowees.Users);
+
+            Assert.Equal(statuses.Presences.Count(), numFollowees);
         }
 
         Task IAsyncLifetime.InitializeAsync()
