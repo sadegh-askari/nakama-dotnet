@@ -88,6 +88,7 @@ namespace Nakama
 
             var decoded = contents.FromJson<Dictionary<string, object>>();
 
+            System.Console.WriteLine("Decoded is " + decoded);
             var exception = new ApiResponseException((int) response.StatusCode, decoded["message"].ToString(),
                 (int) decoded["code"]);
 

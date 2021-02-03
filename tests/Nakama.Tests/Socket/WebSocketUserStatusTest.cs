@@ -230,9 +230,14 @@ namespace Nakama.Tests.Socket
             const int numFollowees = 2000;
 
             var followerId = Guid.NewGuid().ToString();
+
+            System.Console.WriteLine("Authenticating user...");
             var followerSession = await _client.AuthenticateCustomAsync(followerId);
 
             var authTasks = new List<Task<ISession>>();
+
+
+            System.Console.WriteLine("Authenticating followees...");
 
             for (int i = 0; i < numFollowees; i++)
             {
@@ -240,15 +245,23 @@ namespace Nakama.Tests.Socket
                 authTasks.Add(_client.AuthenticateCustomAsync(followeeId));
             }
 
+
             Task.WaitAll(authTasks.ToArray());
+
+            System.Console.WriteLine("Done authenticating followees...");
 
             IApiUsers allFollowees = await _client.GetUsersAsync(
                 followerSession,
-                authTasks.Select<Task<ISession>, string>(task => task.Result.UserId));
+                new string[]{},
+                authTasks.Select<Task<ISession>, string>(task => task.Result.Username));
+
+            System.Console.WriteLine("Done getting IApiUsers...");
 
             var connectTasks = new List<Task>();
 
             IStatus statuses = await _socket.FollowUsersAsync(allFollowees.Users);
+
+            System.Console.WriteLine("Done following users...");
 
             Assert.Equal(statuses.Presences.Count(), numFollowees);
         }
