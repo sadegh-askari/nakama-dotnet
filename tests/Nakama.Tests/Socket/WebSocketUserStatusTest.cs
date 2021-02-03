@@ -234,6 +234,8 @@ namespace Nakama.Tests.Socket
             System.Console.WriteLine("Authenticating user...");
             var followerSession = await _client.AuthenticateCustomAsync(followerId);
 
+            await _socket.ConnectAsync(followerSession);
+
             var authTasks = new List<Task<ISession>>();
 
             System.Console.WriteLine("Authenticating followees...");
@@ -243,7 +245,6 @@ namespace Nakama.Tests.Socket
                 var followeeId = Guid.NewGuid().ToString();
                 authTasks.Add(_client.AuthenticateCustomAsync(followeeId));
             }
-
 
             Task.WaitAll(authTasks.ToArray());
 
@@ -271,7 +272,7 @@ namespace Nakama.Tests.Socket
 
             System.Console.WriteLine("Done following users...");
 
-            Assert.Equal(statuses.Presences.Count(), numFollowees);
+            Assert.Equal(numFollowees, statuses.Presences.Count());
         }
 
         Task IAsyncLifetime.InitializeAsync()
