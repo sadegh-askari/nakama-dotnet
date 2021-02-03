@@ -236,7 +236,6 @@ namespace Nakama.Tests.Socket
 
             var authTasks = new List<Task<ISession>>();
 
-
             System.Console.WriteLine("Authenticating followees...");
 
             for (int i = 0; i < numFollowees; i++)
@@ -249,17 +248,26 @@ namespace Nakama.Tests.Socket
             Task.WaitAll(authTasks.ToArray());
 
             System.Console.WriteLine("Done authenticating followees...");
+            System.Console.WriteLine("Getting IApiUsers...");
 
-            IApiUsers allFollowees = await _client.GetUsersAsync(
-                followerSession,
-                new string[]{},
-                authTasks.Select<Task<ISession>, string>(task => task.Result.Username));
+            IEnumerable<IApiUser> allFollowees = authTasks.Select(task =>
+                new ApiUser{Id = task.Result.UserId}
+            );
 
             System.Console.WriteLine("Done getting IApiUsers...");
 
             var connectTasks = new List<Task>();
 
-            IStatus statuses = await _socket.FollowUsersAsync(allFollowees.Users);
+            IStatus statuses = null;
+
+            try
+            {
+                statuses = await _socket.FollowUsersAsync(allFollowees);
+            }
+            catch (ApiResponseException e)
+            {
+                throw e;
+            }
 
             System.Console.WriteLine("Done following users...");
 
