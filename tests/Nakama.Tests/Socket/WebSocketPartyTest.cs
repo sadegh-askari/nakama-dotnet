@@ -138,8 +138,6 @@ namespace Nakama.Tests.Socket
             var partyPromoteTCS = new TaskCompletionSource<IPartyLeader>();
             socket1.ReceivedPartyLeader += (leader) => partyPromoteTCS.SetResult(leader);
 
-            System.Console.WriteLine("promoting party leader");
-
             socket1.PromotePartyMember(party.PartyId, socket2User.Joins[0]);
 
             IPartyLeader newLeader = await partyPromoteTCS.Task;
