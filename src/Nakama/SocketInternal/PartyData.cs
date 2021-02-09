@@ -28,11 +28,13 @@ namespace Nakama.SocketInternal
         [DataMember(Name = "party_id", Order = 1), Preserve]
         public string PartyId { get; set; }
 
+        public IUserPresence Presence => _presence;
+
         [DataMember(Name = "presence", Order = 2), Preserve]
-        public UserPresence Presence { get; set; }
+        private UserPresence _presence;
 
         [DataMember(Name = "op_code", Order = 3), Preserve]
-        public UserPresence OpCode { get; set; }
+        public int OpCode { get; set; }
 
         [DataMember(Name = "data", Order = 4), Preserve]
         public byte[] Data { get; set; }

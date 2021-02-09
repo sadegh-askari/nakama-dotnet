@@ -22,7 +22,7 @@ namespace Nakama.SocketInternal
     /// Request a list of pending join requests for a party.
     /// </summary>
     [DataContract]
-    public class PartyJoinRequestList : IPartyRequestList
+    public class PartyJoinRequestList : IPartyJoinRequestList
     {
         [DataMember(Name="party_id", Order = 1)]
         public string PartyId { get; set; }

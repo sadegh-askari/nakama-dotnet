@@ -34,7 +34,7 @@ namespace Nakama
         /// <summary>
         /// Maximum number of party members.
         /// </summary>
-        bool MaxSize { get; }
+        int MaxSize { get; }
 
         /// <summary>
         /// Self.

@@ -32,6 +32,6 @@ namespace Nakama
         /// <summary>
         /// User presences that have just left the party.
         /// </summary>
-        IUserPresence[] leaves { get; }
+        IUserPresence[] Leaves { get; }
     }
 }

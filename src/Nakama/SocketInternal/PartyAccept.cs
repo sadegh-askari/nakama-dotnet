@@ -20,13 +20,21 @@ namespace Nakama.SocketInternal
 {
     // Accept a request to join.
     [DataContract]
-    class PartyAccept : IPartyAccept
+    public class PartyAccept : IPartyAccept
     {
         [DataMember(Name = "party_id", Order = 1), Preserve]
         public string PartyId { get; set; }
 
+        public UserPresence Presence
+        {
+            get => _presence;
+            set => _presence = value;
+        }
+
         [DataMember(Name = "presence", Order = 2), Preserve]
-        UserPresence Presence { get; set; }
+        private UserPresence _presence;
+
+        IUserPresence IPartyAccept.Presence => _presence;
     }
 }
 

@@ -25,10 +25,20 @@ namespace Nakama.SocketInternal
         [DataMember(Name = "party_id", Order = 1), Preserve]
         public string PartyId { get; set; }
 
+        public IUserPresence[] Joins
+        {
+            get => _joins;
+        }
+
+        public IUserPresence[] Leaves
+        {
+            get => _leaves;
+        }
+
         [DataMember(Name = "joins", Order = 2), Preserve]
-        public UserPresence[] joins { get; set; }
+        private UserPresence[] _joins;
 
         [DataMember(Name = "leaves", Order = 3), Preserve]
-        public UserPresence[] leaves { get; set; }
+        private UserPresence[] _leaves;
     }
 }

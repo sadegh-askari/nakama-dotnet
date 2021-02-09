@@ -27,10 +27,9 @@ namespace Nakama.SocketInternal
         [DataMember(Name = "party_id", Order = 1)]
         public string PartyId { get; set; }
 
+        public IUserPresence Presence => _presence;
+
         [DataMember(Name = "presence", Order = 2)]
-        public UserPresence Presence { get; set; }
+        private UserPresence _presence;
     }
-
 }
-
-

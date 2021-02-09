@@ -22,7 +22,7 @@ namespace Nakama
         /// <summary>
         /// Party ID to accept a join request for.
         /// </summary>
-        string PartyId { get; }
+        string PartyId { get; set; }
 
         /// <summary>
         /// The presence to accept as a party member.

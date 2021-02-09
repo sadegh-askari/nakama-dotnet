@@ -21,6 +21,7 @@ namespace Nakama.SocketInternal
     /// <summary>
     /// Incoming information about a party.
     /// </summary>
+    [DataContract]
     public class Party : IParty
     {
         [DataMember(Name = "party_id", Order = 1), Preserve]
@@ -30,15 +31,21 @@ namespace Nakama.SocketInternal
         public bool Open { get; set; }
 
         [DataMember(Name = "max_size", Order = 3), Preserve]
-        public bool MaxSize { get; set; }
+        public int MaxSize { get; set; }
+
+        public IUserPresence Self => _self;
 
         [DataMember(Name = "self", Order = 4), Preserve]
-        public UserPresence Self { get; set; }
+        private UserPresence _self;
+
+        public IUserPresence Leader => _leader;
 
         [DataMember(Name = "leader", Order = 5), Preserve]
-        UserPresence Leader { get; set; }
+        private UserPresence _leader;
+
+        public IUserPresence[] Presences => _presences;
 
         [DataMember(Name = "presences", Order = 6), Preserve]
-        UserPresence[] Presences { get; set; }
+        private UserPresence[] _presences;
     }
 }

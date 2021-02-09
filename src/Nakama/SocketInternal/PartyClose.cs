@@ -25,7 +25,7 @@ namespace Nakama.SocketInternal
     /// End a party, kicking all party members and closing it.
     /// </summary>
     [DataContract]
-    class PartyClose : IPartyClose
+    public class PartyClose : IPartyClose
     {
         [DataMember(Name = "party_id", Order = 1), Preserve]
         public string PartyId { get; set; }

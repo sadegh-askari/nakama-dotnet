@@ -19,7 +19,7 @@ namespace Nakama
     /// <summary>
     /// Request a list of pending join requests for a party.
     /// </summary>
-    public interface PartyJoinRequestList
+    public interface IPartyJoinRequestList
     {
         /// <summary>
         /// Party ID to get a list of join requests for.

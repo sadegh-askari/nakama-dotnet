@@ -117,6 +117,57 @@ namespace Nakama.SocketInternal
         [DataMember(Name="stream_data", Order = 30), Preserve]
         public StreamState StreamState { get; set; }
 
+        [DataMember(Name="party", Order = 34), Preserve]
+        public Party Party { get; set; }
+
+        [DataMember(Name="party_create", Order = 35), Preserve]
+        public PartyCreate PartyCreate { get; set; }
+
+        [DataMember(Name="party_join", Order = 36), Preserve]
+        public PartyJoin PartyJoin { get; set; }
+
+        [DataMember(Name="party_leave", Order = 37), Preserve]
+        public PartyLeave PartyLeave { get; set; }
+
+        [DataMember(Name="party_promote", Order = 38), Preserve]
+        public PartyPromote PartyPromote { get; set; }
+
+        [DataMember(Name="party_leader", Order =  39), Preserve]
+        public PartyLeader PartyLeader { get; set; }
+
+        [DataMember(Name="party_accept", Order =  40), Preserve]
+        public PartyAccept PartyAccept { get; set; }
+
+        [DataMember(Name="party_remove", Order =  41), Preserve]
+        public PartyRemove PartyRemove { get; set; }
+
+        [DataMember(Name="party_close", Order =  42), Preserve]
+        public PartyClose PartyClose { get; set; }
+
+        [DataMember(Name="party_join_request_list", Order =  43), Preserve]
+        public PartyJoinRequestList PartyJoinRequestList { get; set; }
+
+        [DataMember(Name="party_join_request", Order =  44), Preserve]
+        public PartyJoinRequest PartyJoinRequest { get; set; }
+
+        [DataMember(Name="party_matchmaker_add", Order =  45), Preserve]
+        public PartyMatchmakerAdd PartyMatchmakerAdd { get; set; }
+
+        [DataMember(Name="party_matchmaker_remove", Order =  46), Preserve]
+        public PartyMatchmakerRemove PartyMatchmakerRemove { get; set; }
+
+        [DataMember(Name="party_matchmaker_ticket", Order =  47), Preserve]
+        public PartyMatchmakerTicket PartyMatchmakerTicket { get; set; }
+
+        [DataMember(Name="party_data", Order =  48), Preserve]
+        public PartyData PartyData { get; set; }
+
+        [DataMember(Name="party_data_send", Order =  49), Preserve]
+        public PartyDataSend PartyDataSend { get; set; }
+
+        [DataMember(Name="party_presence_event", Order =  50), Preserve]
+        public PartyPresenceEvent PartyPresenceEvent { get; set; }
+
         public override string ToString()
         {
             return "WebSocketMessageEnvelope";

@@ -27,8 +27,8 @@ namespace Nakama
         string PartyId { get; }
 
         /// <summary>
-        /// // The presence to remove or reject.
+        /// The presence to remove or reject.
         /// </summary>
-        IUserPresence presence { get; }
+        IUserPresence Presence { get; }
     }
 }

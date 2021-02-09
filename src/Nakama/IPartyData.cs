@@ -33,7 +33,7 @@ namespace Nakama
         /// <summary>
         /// Op code value.
         /// </summary>
-        IUserPresence OpCode { get; }
+        int OpCode { get; }
 
         /// <summary>
         /// Data payload, if any.

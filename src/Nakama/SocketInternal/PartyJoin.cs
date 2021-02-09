@@ -21,7 +21,7 @@ namespace Nakama.SocketInternal
     /// Join a party, or request to join if the party is not open.
     /// </summary>
     [DataContract]
-    class PartyJoin : IPartyJoin
+    public class PartyJoin : IPartyJoin
     {
         [DataMember(Name = "party_id", Order = 1)]
         public string PartyId { get; set; }

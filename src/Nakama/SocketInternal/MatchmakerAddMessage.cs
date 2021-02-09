@@ -25,7 +25,6 @@ namespace Nakama.SocketInternal
     [DataContract]
     public class MatchmakerAddMessage
     {
-
         [DataMember(Name = "min_count", Order = 1), Preserve]
         public int MinCount { get; set; }
 

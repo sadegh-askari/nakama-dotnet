@@ -19,7 +19,7 @@ namespace Nakama
     /// <summary>
     /// Promote a new party leader.
     /// </summary>
-    public interface IPartyPromote
+    interface IPartyPromote
     {
         /// <summary>
         /// Party ID to promote a new leader for.

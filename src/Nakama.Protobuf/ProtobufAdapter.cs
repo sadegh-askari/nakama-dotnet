@@ -171,7 +171,6 @@ namespace Nakama.Protobuf
         public async void Send(WebSocketMessageEnvelope envelope, CancellationToken cancellationToken,
             bool reliable = true)
         {
-
             if (_webSocket == null)
             {
                 ReceivedError?.Invoke(new SocketException((int) SocketError.NotConnected));
