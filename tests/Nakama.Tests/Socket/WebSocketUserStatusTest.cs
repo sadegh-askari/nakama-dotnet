@@ -301,8 +301,6 @@ namespace Nakama.Tests.Socket
         public async void TestUserDoesNotReceiveUpdatedAfterUnfollow()
         {
             var id1 = Guid.NewGuid().ToString();
-
-            System.Console.WriteLine("id1 is " + id1);
             var id2 = Guid.NewGuid().ToString();
 
             var session1 = await _client.AuthenticateCustomAsync(id1);
@@ -473,7 +471,6 @@ namespace Nakama.Tests.Socket
             Assert.Equal(3, numJoinsReceived);
 
             await socket1.CloseAsync();
-            await socket2.CloseAsync();
         }
     }
 }
