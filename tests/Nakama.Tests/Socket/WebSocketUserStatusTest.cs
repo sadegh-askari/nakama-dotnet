@@ -247,33 +247,36 @@ namespace Nakama.Tests.Socket
         {
             const int numFollowees = 2000;
 
-            var followerId = Guid.NewGuid().ToString();
-
-            System.Console.WriteLine("Authenticating user...");
-            var followerSession = await _client.AuthenticateCustomAsync(followerId);
-
+            var id1 = Guid.NewGuid().ToString();
+            var session1 = await _client.AuthenticateCustomAsync(id1);
             var socket1 = Nakama.Socket.From(_client);
 
-            await socket1.ConnectAsync(followerSession);
+            await socket1.ConnectAsync(session1);
 
-            var authTasks = new List<Task<ISession>>();
-
-            System.Console.WriteLine("Authenticating followees...");
+            var followeeTasks = new List<Task>();
+            var followeeSessions = new List<ISession>();
 
             for (int i = 0; i < numFollowees; i++)
             {
+                ISocket socket = null;
                 var followeeId = Guid.NewGuid().ToString();
-                authTasks.Add(_client.AuthenticateCustomAsync(followeeId));
+                followeeTasks.Add(_client.AuthenticateCustomAsync(followeeId)
+                .ContinueWith(session => {
+                    followeeSessions.Add(session.Result);
+                    socket = Nakama.Socket.From(_client);
+                    return socket.ConnectAsync(session1);
+                })
+                .ContinueWith(prevTask => {
+                    return socket.UpdateStatusAsync("status for " + i.ToString());
+                }));
             }
 
-            Task.WaitAll(authTasks.ToArray());
+
+            Task.WaitAll(followeeTasks.ToArray());
 
             System.Console.WriteLine("Done authenticating followees...");
             System.Console.WriteLine("Getting IApiUsers...");
 
-            IEnumerable<IApiUser> allFollowees = authTasks.Select(task =>
-                new ApiUser{Id = task.Result.UserId}
-            );
 
             System.Console.WriteLine("Done getting IApiUsers...");
 
@@ -283,7 +286,7 @@ namespace Nakama.Tests.Socket
 
             try
             {
-                statuses = await socket1.FollowUsersAsync(allFollowees);
+                statuses = await socket1.FollowUsersAsync(followeeSessions.Select(session => new ApiUser{Id = session.UserId}));
             }
             catch (ApiResponseException e)
             {
