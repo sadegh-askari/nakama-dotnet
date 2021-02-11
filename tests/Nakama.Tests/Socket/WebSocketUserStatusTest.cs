@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -385,6 +386,44 @@ namespace Nakama.Tests.Socket
 
             await socket1.CloseAsync();
             await socket2.CloseAsync();
+        }
+
+        [Fact]
+        public async void TestUnfollowSelf()
+        {
+            var id1 = Guid.NewGuid().ToString();
+            var session1 = await _client.AuthenticateCustomAsync(id1);
+            var socket1 = Nakama.Socket.From(_client);
+
+            await socket1.ConnectAsync(session1);
+
+            bool receivedOwnPresence = false;
+
+            socket1.ReceivedStatusPresence += status => {
+                receivedOwnPresence = true;
+            };
+
+            await socket1.UnfollowUsersAsync(new IApiUser[]{new ApiUser{Id = session1.UserId}});
+            await socket1.UpdateStatusAsync("this should still be received by the user");
+            await Task.Delay(Timeout);
+
+            Assert.True(receivedOwnPresence);
+
+            await socket1.CloseAsync();
+        }
+
+        [Fact]
+        public async void TestFollowNonExistentUser()
+        {
+            var id1 = Guid.NewGuid().ToString();
+            var session1 = await _client.AuthenticateCustomAsync(id1);
+            var socket1 = Nakama.Socket.From(_client);
+
+            await socket1.ConnectAsync(session1);
+            await Assert.ThrowsAsync<WebSocketException>(
+                () => socket1.FollowUsersAsync(new IApiUser[]{new ApiUser{Id = "does_not_exist"}}));
+
+            await socket1.CloseAsync();
         }
     }
 }
