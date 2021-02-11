@@ -245,7 +245,7 @@ namespace Nakama.Tests.Socket
         [Fact]
         public async void TestFollowMassiveNumberOfUsers()
         {
-            const int numFollowees = 2000;
+            const int numFollowees = 1000;
 
             var id1 = Guid.NewGuid().ToString();
             var session1 = await _client.AuthenticateCustomAsync(id1);
@@ -260,21 +260,20 @@ namespace Nakama.Tests.Socket
             {
                 ISocket socket = null;
                 var followeeId = Guid.NewGuid().ToString();
-                followeeTasks.Add(_client.AuthenticateCustomAsync(followeeId)
-                .ContinueWith(session => {
+
+                var followeeTask = await _client.AuthenticateCustomAsync(followeeId)
+                .ContinueWith(async session => {
                     followeeSessions.Add(session.Result);
                     socket = Nakama.Socket.From(_client);
-                    return socket.ConnectAsync(session.Result);
-                })
-                .ContinueWith(prevTask => {
-                    return socket.UpdateStatusAsync("status for " + i.ToString());
-                }));
+                    await socket.ConnectAsync(session.Result);
+                    await socket.UpdateStatusAsync("status for " + i.ToString());
+                });
+
+                followeeTasks.Add(followeeTask);
             }
 
 
             Task.WaitAll(followeeTasks.ToArray());
-
-            var connectTasks = new List<Task>();
 
             IStatus statuses = null;
 
