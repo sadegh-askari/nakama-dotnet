@@ -425,5 +425,55 @@ namespace Nakama.Tests.Socket
 
             await socket1.CloseAsync();
         }
+
+        [Fact]
+        public async void TestRepeatedOnlineOffline()
+        {
+            var id1 = Guid.NewGuid().ToString();
+            var id2 = Guid.NewGuid().ToString();
+
+            var session1 = await _client.AuthenticateCustomAsync(id1);
+            var session2 = await _client.AuthenticateCustomAsync(id2);
+
+            var socket1 = Nakama.Socket.From(_client);
+            var socket2 = Nakama.Socket.From(_client);
+
+            int numJoinsReceived = 0;
+            int numLeavesReceived = 0;
+
+            socket1.ReceivedStatusPresence += status =>
+            {
+                if (status.Joins.Any(join => join.UserId == session2.UserId))
+                {
+                    numJoinsReceived++;
+                }
+
+                if (status.Leaves.Any(leave => leave.UserId == session2.UserId))
+                {
+                    numLeavesReceived++;
+                }
+            };
+
+            await socket1.ConnectAsync(session1);
+            await socket2.ConnectAsync(session2);
+
+            await socket1.FollowUsersAsync(new string[]{session2.UserId});
+            await socket2.UpdateStatusAsync("I am going to spam socket 1 (first time)");
+            await socket2.CloseAsync();
+            await socket2.ConnectAsync(session2);
+            await socket2.UpdateStatusAsync("I am going to spam socket 1 (second time)");
+            await socket2.CloseAsync();
+            await socket2.ConnectAsync(session2);
+            await socket2.UpdateStatusAsync("I am going to spam socket 1 (third time)");
+            await socket2.CloseAsync();
+
+            await Task.Delay(Timeout);
+
+            Assert.Equal(3, numLeavesReceived);
+            Assert.Equal(3, numJoinsReceived);
+
+            await socket1.CloseAsync();
+            await socket2.CloseAsync();
+        }
     }
 }
