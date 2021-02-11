@@ -264,7 +264,7 @@ namespace Nakama.Tests.Socket
                 .ContinueWith(session => {
                     followeeSessions.Add(session.Result);
                     socket = Nakama.Socket.From(_client);
-                    return socket.ConnectAsync(session1);
+                    return socket.ConnectAsync(session.Result);
                 })
                 .ContinueWith(prevTask => {
                     return socket.UpdateStatusAsync("status for " + i.ToString());
@@ -274,26 +274,18 @@ namespace Nakama.Tests.Socket
 
             Task.WaitAll(followeeTasks.ToArray());
 
-            System.Console.WriteLine("Done authenticating followees...");
-            System.Console.WriteLine("Getting IApiUsers...");
-
-
-            System.Console.WriteLine("Done getting IApiUsers...");
-
             var connectTasks = new List<Task>();
 
             IStatus statuses = null;
 
             try
             {
-                statuses = await socket1.FollowUsersAsync(followeeSessions.Select(session => new ApiUser{Id = session.UserId}));
+                statuses = await socket1.FollowUsersAsync(followeeSessions.Select(session => session.UserId));
             }
             catch (ApiResponseException e)
             {
                 throw e;
             }
-
-            System.Console.WriteLine("Done following users...");
 
             Assert.Equal(numFollowees, statuses.Presences.Count());
 
