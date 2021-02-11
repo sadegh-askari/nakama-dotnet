@@ -300,6 +300,8 @@ namespace Nakama.Tests.Socket
         public async void TestUserDoesNotReceiveUpdatedAfterUnfollow()
         {
             var id1 = Guid.NewGuid().ToString();
+
+            System.Console.WriteLine("id1 is " + id1);
             var id2 = Guid.NewGuid().ToString();
 
             var session1 = await _client.AuthenticateCustomAsync(id1);
@@ -308,7 +310,10 @@ namespace Nakama.Tests.Socket
             var waitForStatusPresence = new TaskCompletionSource<IStatusPresenceEvent>();
 
             var socket1 = Nakama.Socket.From(_client);
-            socket1.ReceivedStatusPresence += statuses => waitForStatusPresence.SetResult(statuses);
+
+            Action<IStatusPresenceEvent> receivedPresenceWhileFollowing = (statuses) => waitForStatusPresence.SetResult(statuses);
+            socket1.ReceivedStatusPresence += receivedPresenceWhileFollowing;
+
             socket1.ReceivedError += e => {
                 waitForStatusPresence.TrySetException(e);
             };
@@ -319,9 +324,6 @@ namespace Nakama.Tests.Socket
             var socket2 = Nakama.Socket.From(_client);
 
             await socket2.ConnectAsync(session2);
-            socket2.ReceivedError += e => {
-                throw e;
-            };
 
             var cancelAfterTimeout = new CancellationTokenSource();
             cancelAfterTimeout.Token.Register(() => waitForStatusPresence.TrySetException(
@@ -330,6 +332,7 @@ namespace Nakama.Tests.Socket
 
             await socket2.UpdateStatusAsync("new status change");
             await waitForStatusPresence.Task;
+            socket1.ReceivedStatusPresence -= receivedPresenceWhileFollowing;
 
             await socket1.UnfollowUsersAsync(new []{session2.UserId});
             await socket2.UpdateStatusAsync("new status change that should not be received");
@@ -338,7 +341,10 @@ namespace Nakama.Tests.Socket
 
             socket1.ReceivedStatusPresence += status =>
             {
-                ensureNoStatusPresence.SetException(new Exception("Received user leave presence after unfollowing."));
+                if (status.Joins.Any(join => join.UserId == session2.UserId))
+                {
+                    throw new Exception("Received user leave presence after unfollowing.");
+                }
             };
 
             await Task.Delay(Timeout);
@@ -368,12 +374,7 @@ namespace Nakama.Tests.Socket
             int numStatusesReceived = 0;
 
             socket1.ReceivedStatusPresence += status => {
-                System.Console.WriteLine("socket1 received status presence");
                 numStatusesReceived++;
-            };
-
-            socket2.ReceivedStatusPresence += status => {
-                System.Console.WriteLine("socket2 received status presence");
             };
 
             await socket2.UpdateStatusAsync("this should only be dispatched once");
