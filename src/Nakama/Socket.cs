@@ -510,6 +510,9 @@ namespace Nakama
         private void ReceivedMessage(ArraySegment<byte> buffer)
         {
             var contents = System.Text.Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+
+            System.Console.WriteLine("got json: " + contents);
+
             var envelope = contents.FromJson<WebSocketMessageEnvelope>();
             try
             {
@@ -592,6 +595,7 @@ namespace Nakama
         private Task<WebSocketMessageEnvelope> SendAsync(WebSocketMessageEnvelope envelope)
         {
             var json = envelope.ToJson();
+            System.Console.WriteLine("sending json: " + json);
             var buffer = System.Text.Encoding.UTF8.GetBytes(json);
             if (string.IsNullOrEmpty(envelope.Cid))
             {
@@ -601,6 +605,9 @@ namespace Nakama
 
             var completer = new TaskCompletionSource<WebSocketMessageEnvelope>();
             _responses[envelope.Cid] = completer;
+
+            System.Console.WriteLine("sending through adapter");
+
             _adapter.Send(new ArraySegment<byte>(buffer), CancellationToken.None);
             return completer.Task;
         }

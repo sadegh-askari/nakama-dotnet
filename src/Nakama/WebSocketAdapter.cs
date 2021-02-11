@@ -145,12 +145,16 @@ namespace Nakama
         {
             if (_webSocket == null)
             {
+                System.Console.WriteLine("null web socket");
+
                 ReceivedError?.Invoke(new SocketException((int) SocketError.NotConnected));
                 return;
             }
 
             try
             {
+                        System.Console.WriteLine("sending through socket");
+
                 var sendTask = _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
                 await Task.WhenAny(sendTask, Task.Delay(_sendTimeoutSec, cancellationToken));
             }
@@ -193,6 +197,7 @@ namespace Nakama
 
                 try
                 {
+
                     Received?.Invoke(data);
                 }
                 catch (Exception e)
