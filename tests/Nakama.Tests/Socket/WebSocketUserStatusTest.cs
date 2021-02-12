@@ -51,7 +51,7 @@ namespace Nakama.Tests.Socket
 
             var socket1 = Nakama.Socket.From(_client);
             socket1.ReceivedStatusPresence += statuses => completer.SetResult(statuses);
-            socket1.ReceivedError += e => throw e;
+            socket1.ReceivedError += e => canceller.Cancel();
             await socket1.ConnectAsync(session1);
             await socket1.FollowUsersAsync(new[] {session2.UserId});
 
@@ -62,6 +62,9 @@ namespace Nakama.Tests.Socket
             var result = await completer.Task;
             Assert.NotNull(result);
             Assert.Contains(result.Joins, joined => joined.UserId.Equals(session2.UserId));
+
+            await socket1.CloseAsync();
+            await socket2.CloseAsync();
         }
 
         [Fact]
@@ -89,6 +92,9 @@ namespace Nakama.Tests.Socket
             var result = await completer.Task;
             Assert.NotNull(result);
             Assert.Contains(result.Joins, joined => joined.UserId.Equals(session2.UserId));
+
+            await socket1.CloseAsync();
+            await socket2.CloseAsync();
         }
 
         [Fact]
@@ -105,7 +111,7 @@ namespace Nakama.Tests.Socket
             Assert.NotNull(statuses);
             Assert.Empty(statuses.Presences);
 
-            socket1.CloseAsync();
+            await socket1.CloseAsync();
         }
 
         [Fact]
@@ -245,7 +251,7 @@ namespace Nakama.Tests.Socket
         [Fact]
         public async void TestFollowMassiveNumberOfUsers()
         {
-            const int numFollowees = 1000;
+            const int numFollowees = 500;
 
             var id1 = Guid.NewGuid().ToString();
             var session1 = await _client.AuthenticateCustomAsync(id1);
@@ -452,9 +458,11 @@ namespace Nakama.Tests.Socket
             await socket1.FollowUsersAsync(new string[]{session2.UserId});
             await socket2.UpdateStatusAsync("I am going to spam socket 1 (first time)");
             await socket2.CloseAsync();
+
             await socket2.ConnectAsync(session2);
             await socket2.UpdateStatusAsync("I am going to spam socket 1 (second time)");
             await socket2.CloseAsync();
+
             await socket2.ConnectAsync(session2);
             await socket2.UpdateStatusAsync("I am going to spam socket 1 (third time)");
             await socket2.CloseAsync();
