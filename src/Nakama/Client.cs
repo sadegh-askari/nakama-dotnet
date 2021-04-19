@@ -244,7 +244,7 @@ namespace Nakama
 
         /// <inheritdoc cref="CreateGroupAsync"/>
         public async Task<IApiGroup> CreateGroupAsync(ISession session, string name, string description = "",
-            string avatarUrl = null, string langTag = null, bool open = true, int maxCount = 100)
+            string avatarUrl = null, string langTag = null, bool open = true, int maxCount = 100, string tag = "", int minTrophy = 0, int minLevel = 0)
         {
             if (AutoRefreshSession && !string.IsNullOrEmpty(session.RefreshToken) &&
                 session.HasExpired(DateTime.UtcNow.Add(DefaultExpiredTimeSpan)))
@@ -259,7 +259,10 @@ namespace Nakama
                 AvatarUrl = avatarUrl,
                 LangTag = langTag,
                 Open = open,
-                MaxCount = maxCount
+                MaxCount = maxCount,
+                Tag = tag,
+                MinLevel = minLevel,
+                MinTrophy = minTrophy
             });
         }
 
@@ -618,7 +621,7 @@ namespace Nakama
 
         /// <inheritdoc cref="ListGroupsAsync"/>
         public async Task<IApiGroupList> ListGroupsAsync(ISession session, string name = null, int limit = 1,
-            string cursor = null)
+            string cursor = null, bool leaderboardMode = false, int minTrophy = -1, int minLevel = -1, bool checkCanJoin = false)
         {
             if (AutoRefreshSession && !string.IsNullOrEmpty(session.RefreshToken) &&
                 session.HasExpired(DateTime.UtcNow.Add(DefaultExpiredTimeSpan)))
@@ -626,7 +629,7 @@ namespace Nakama
                 await SessionRefreshAsync(session);
             }
 
-            return await _apiClient.ListGroupsAsync(session.AuthToken, name, cursor, limit);
+            return await _apiClient.ListGroupsAsync(session.AuthToken, name, cursor, limit, leaderboardMode, minTrophy, minLevel, checkCanJoin);
         }
 
         /// <inheritdoc cref="ListLeaderboardRecordsAsync"/>
@@ -780,7 +783,7 @@ namespace Nakama
         }
 
         /// <inheritdoc cref="PromoteGroupUsersAsync"/>
-        public async Task PromoteGroupUsersAsync(ISession session, string groupId, IEnumerable<string> ids)
+        public async Task PromoteGroupUsersAsync(ISession session, string groupId, IEnumerable<string> ids, bool setSuperAdmin)
         {
             if (AutoRefreshSession && !string.IsNullOrEmpty(session.RefreshToken) &&
                 session.HasExpired(DateTime.UtcNow.Add(DefaultExpiredTimeSpan)))
@@ -788,7 +791,7 @@ namespace Nakama
                 await SessionRefreshAsync(session);
             }
 
-            await _apiClient.PromoteGroupUsersAsync(session.AuthToken, groupId, ids);
+            await _apiClient.PromoteGroupUsersAsync(session.AuthToken, groupId, ids, setSuperAdmin);
         }
 
         /// <inheritdoc cref="ReadStorageObjectsAsync"/>
@@ -1016,7 +1019,7 @@ namespace Nakama
 
         /// <inheritdoc cref="UpdateGroupAsync"/>
         public async Task UpdateGroupAsync(ISession session, string groupId, string name, bool open,
-            string description = null, string avatarUrl = null, string langTag = null)
+            string description = null, string avatarUrl = null, string langTag = null, int minTrophy = 0, int minLevel = 0, int totalTrophy = 0)
         {
             if (AutoRefreshSession && !string.IsNullOrEmpty(session.RefreshToken) &&
                 session.HasExpired(DateTime.UtcNow.Add(DefaultExpiredTimeSpan)))
@@ -1032,7 +1035,10 @@ namespace Nakama
                     Open = open,
                     AvatarUrl = avatarUrl,
                     Description = description,
-                    LangTag = langTag
+                    LangTag = langTag,
+                    MinTrophy = minTrophy,
+                    MinLevel = minLevel,
+                    TotalTrophy = totalTrophy
                 });
         }
 
@@ -1103,6 +1109,16 @@ namespace Nakama
                     Score = score.ToString(),
                     Subscore = subScore.ToString()
                 });
+        }
+
+        public Task DeleteOldMessages(ISession session)
+        {
+            return _apiClient.DeleteOldMessages(session.AuthToken);
+        }
+
+        public Task<IApiUsers> SearchUsersAsync(ISession session, string namePattern, int limit)
+        {
+            return _apiClient.SearchUsersAsync(session.AuthToken, namePattern, limit);
         }
     }
 }

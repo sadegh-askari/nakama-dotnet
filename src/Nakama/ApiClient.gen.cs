@@ -1010,6 +1010,12 @@ namespace Nakama
         /// Mark a group as open or not where only admins can accept members.
         /// </summary>
         bool Open { get; }
+
+        string Tag { get; }
+
+        int MinLevel { get; }
+
+        int MinTrophy { get; }
     }
 
     /// <inheritdoc />
@@ -1040,6 +1046,15 @@ namespace Nakama
         [DataMember(Name="open"), Preserve]
         public bool Open { get; set; }
 
+        [DataMember(Name = "tag"), Preserve]
+        public string Tag { get; set; }
+
+        [DataMember(Name = "min_level"), Preserve]
+        public int MinLevel { get; set; }
+
+        [DataMember(Name = "min_trophy"), Preserve]
+        public int MinTrophy { get; set; }
+
         public override string ToString()
         {
             var output = "";
@@ -1049,6 +1064,9 @@ namespace Nakama
             output = string.Concat(output, "MaxCount: ", MaxCount, ", ");
             output = string.Concat(output, "Name: ", Name, ", ");
             output = string.Concat(output, "Open: ", Open, ", ");
+            output = string.Concat(output, "Tag: ", Tag, ", ");
+            output = string.Concat(output, "MinLevel: ", MinLevel, ", ");
+            output = string.Concat(output, "MinTrophy: ", MinTrophy, ", ");
             return output;
         }
     }
@@ -1348,6 +1366,11 @@ namespace Nakama
         /// The UNIX time when the group was last updated.
         /// </summary>
         string UpdateTime { get; }
+
+        int MinTrophy { get; }
+        int MinLevel { get; }
+        string Tag { get; }
+        int TotalTrophy { get; }
     }
 
     /// <inheritdoc />
@@ -1402,6 +1425,18 @@ namespace Nakama
         [DataMember(Name="update_time"), Preserve]
         public string UpdateTime { get; set; }
 
+        [DataMember(Name = "min_trophy"), Preserve]
+        public int MinTrophy { get; set; }
+
+        [DataMember(Name = "min_level"), Preserve]
+        public int MinLevel { get; set; }
+
+        [DataMember(Name = "tag"), Preserve]
+        public string Tag { get; set; }
+
+        [DataMember(Name = "total_trophy"), Preserve]
+        public int TotalTrophy { get; set; }
+
         public override string ToString()
         {
             var output = "";
@@ -1417,6 +1452,10 @@ namespace Nakama
             output = string.Concat(output, "Name: ", Name, ", ");
             output = string.Concat(output, "Open: ", Open, ", ");
             output = string.Concat(output, "UpdateTime: ", UpdateTime, ", ");
+            output = string.Concat(output, "MinTrophy: ", MinTrophy, ", ");
+            output = string.Concat(output, "MinLevel: ", MinLevel, ", ");
+            output = string.Concat(output, "Tag: ", Tag, ", ");
+            output = string.Concat(output, "TotalTrophy: ", TotalTrophy, ", ");
             return output;
         }
     }
@@ -2811,6 +2850,10 @@ namespace Nakama
         /// The username of the user's account.
         /// </summary>
         string Username { get; }
+
+        string Tag { get; }
+        int Trophy { get; }
+        int Level { get; }
     }
 
     /// <inheritdoc />
@@ -2841,6 +2884,15 @@ namespace Nakama
         [DataMember(Name="username"), Preserve]
         public string Username { get; set; }
 
+        [DataMember(Name = "tag"), Preserve]
+        public string Tag { get; set; }
+
+        [DataMember(Name = "trophy"), Preserve]
+        public int Trophy { get; set; }
+
+        [DataMember(Name = "level"), Preserve]
+        public int Level { get; set; }
+
         public override string ToString()
         {
             var output = "";
@@ -2850,6 +2902,9 @@ namespace Nakama
             output = string.Concat(output, "Location: ", Location, ", ");
             output = string.Concat(output, "Timezone: ", Timezone, ", ");
             output = string.Concat(output, "Username: ", Username, ", ");
+            output = string.Concat(output, "Tag: ", Tag, ", ");
+            output = string.Concat(output, "Trophy: ", Trophy, ", ");
+            output = string.Concat(output, "Level: ", Level, ", ");
             return output;
         }
     }
@@ -2889,6 +2944,10 @@ namespace Nakama
         /// Open is true if anyone should be allowed to join, or false if joins must be approved by a group admin.
         /// </summary>
         bool Open { get; }
+
+        int MinTrophy { get; }
+        int MinLevel { get; }
+        int TotalTrophy { get; }
     }
 
     /// <inheritdoc />
@@ -2919,6 +2978,15 @@ namespace Nakama
         [DataMember(Name="open"), Preserve]
         public bool Open { get; set; }
 
+        [DataMember(Name = "min_trophy"), Preserve]
+        public int MinTrophy { get; set; }
+
+        [DataMember(Name = "min_level"), Preserve]
+        public int MinLevel { get; set; }
+
+        [DataMember(Name = "total_trophy"), Preserve]
+        public int TotalTrophy { get; set; }
+
         public override string ToString()
         {
             var output = "";
@@ -2928,6 +2996,9 @@ namespace Nakama
             output = string.Concat(output, "LangTag: ", LangTag, ", ");
             output = string.Concat(output, "Name: ", Name, ", ");
             output = string.Concat(output, "Open: ", Open, ", ");
+            output = string.Concat(output, "MinTrophy: ", MinTrophy, ", ");
+            output = string.Concat(output, "MinLevel: ", MinLevel, ", ");
+            output = string.Concat(output, "TotalTrophy: ", TotalTrophy, ", ");
             return output;
         }
     }
@@ -3027,6 +3098,14 @@ namespace Nakama
         /// The username of the user's account.
         /// </summary>
         string Username { get; }
+
+        string Tag { get; }
+        int Trophy { get; }
+        int Level { get; }
+        /// <summary>
+        /// We are setting this in FriendManager
+        /// </summary>
+        int Status { get; set; }
     }
 
     /// <inheritdoc />
@@ -3105,6 +3184,18 @@ namespace Nakama
         [DataMember(Name="username"), Preserve]
         public string Username { get; set; }
 
+        [DataMember(Name = "tag"), Preserve]
+        public string Tag { get; set; }
+
+        [DataMember(Name = "trophy"), Preserve]
+        public int Trophy { get; set; }
+
+        [DataMember(Name = "level"), Preserve]
+        public int Level { get; set; }
+
+        [DataMember(Name = "status"), Preserve]
+        public int Status { get; set; }
+
         public override string ToString()
         {
             var output = "";
@@ -3126,6 +3217,10 @@ namespace Nakama
             output = string.Concat(output, "Timezone: ", Timezone, ", ");
             output = string.Concat(output, "UpdateTime: ", UpdateTime, ", ");
             output = string.Concat(output, "Username: ", Username, ", ");
+            output = string.Concat(output, "Tag: ", Tag, ", ");
+            output = string.Concat(output, "Trophy: ", Trophy, ", ");
+            output = string.Concat(output, "Level: ", Level, ", ");
+            output = string.Concat(output, "Status: ", Status, ", ");
             return output;
         }
     }
@@ -4839,7 +4934,11 @@ namespace Nakama
             string bearerToken,
             string name,
             string cursor,
-            int? limit)
+            int? limit,
+            bool leaderboardMode,
+            int minTrophy,
+            int minLevel,
+            bool checkCanJoin)
         {
 
             var urlpath = "/v2/group";
@@ -4854,6 +4953,11 @@ namespace Nakama
             if (limit != null) {
                 queryParams = string.Concat(queryParams, "limit=", limit, "&");
             }
+
+            queryParams = string.Concat(queryParams, "leaderboardMode=", leaderboardMode, "&");
+            queryParams = string.Concat(queryParams, "minTrophy=", minTrophy, "&");
+            queryParams = string.Concat(queryParams, "minLevel=", minLevel, "&");
+            queryParams = string.Concat(queryParams, "checkCanJoin=", checkCanJoin);
 
             var uri = new UriBuilder(_baseUri)
             {
@@ -5198,7 +5302,8 @@ namespace Nakama
         public async Task PromoteGroupUsersAsync(
             string bearerToken,
             string groupId,
-            IEnumerable<string> userIds)
+            IEnumerable<string> userIds,
+            bool setSuperAdmin)
         {
             if (groupId == null)
             {
@@ -5213,6 +5318,8 @@ namespace Nakama
             {
                 queryParams = string.Concat(queryParams, "user_ids=", elem, "&");
             }
+
+            queryParams = string.Concat(queryParams, "set_super_admin=", setSuperAdmin, "&");
 
             var uri = new UriBuilder(_baseUri)
             {
@@ -6182,6 +6289,58 @@ namespace Nakama
             byte[] content = null;
             var contents = await HttpAdapter.SendAsync(method, uri, headers, content, Timeout);
             return contents.FromJson<ApiUserGroupList>();
+        }
+
+        public async Task DeleteOldMessages(string bearerToken)
+        {
+            var urlpath = "/v2/channel/delete_messages";
+
+            var uri = new UriBuilder(_baseUri)
+            {
+                Path = urlpath
+            }.Uri;
+
+            var method = "DELETE";
+            var headers = new Dictionary<string, string>();
+            var header = string.Concat("Bearer ", bearerToken);
+            headers.Add("Authorization", header);
+
+            byte[] content = null;
+            await HttpAdapter.SendAsync(method, uri, headers, content, Timeout);
+        }
+
+        public async Task<IApiUsers> SearchUsersAsync(
+            string bearerToken,
+            string namePattern,
+            int limit)
+        {
+
+            var urlpath = "/v2/user/search";
+
+            if (string.IsNullOrEmpty(namePattern))
+                return null;
+
+            string queryParams = "";
+            queryParams = string.Concat(queryParams, "name=", namePattern, "&");
+            if (limit > 0 && limit < 50)
+                queryParams = string.Concat(queryParams, "limit=", limit, "&");
+            else
+                queryParams = string.Concat(queryParams, "limit=", 50, "&");
+
+            var uri = new UriBuilder(_baseUri)
+            {
+                Path = urlpath,
+                Query = queryParams
+            }.Uri;
+
+            var method = "GET";
+            var headers = new Dictionary<string, string>();
+            var header = string.Concat("Bearer ", bearerToken);
+            headers.Add("Authorization", header);
+
+            byte[] content = null;
+            var contents = await HttpAdapter.SendAsync(method, uri, headers, content, Timeout);
+            return contents.FromJson<ApiUsers>();
         }
     }
 }

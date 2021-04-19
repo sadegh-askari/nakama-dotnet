@@ -196,7 +196,7 @@ namespace Nakama
         /// <param name="maxCount">The maximum number of members allowed.</param>
         /// <returns>A task which resolves to a new group object.</returns>
         Task<IApiGroup> CreateGroupAsync(ISession session, string name, string description = "",
-            string avatarUrl = null, string langTag = null, bool open = true, int maxCount = 100);
+            string avatarUrl = null, string langTag = null, bool open = true, int maxCount = 100, string tag = "", int minTrophy = 0, int minLevel = 0);
 
         /// <summary>
         /// Delete one more or users by id or username from friends.
@@ -459,7 +459,7 @@ namespace Nakama
         /// <param name="limit">The number of groups to list.</param>
         /// <param name="cursor">A cursor for the current position in the groups to list.</param>
         /// <returns>A task to resolve group objects.</returns>
-        Task<IApiGroupList> ListGroupsAsync(ISession session, string name = null, int limit = 1, string cursor = null);
+        Task<IApiGroupList> ListGroupsAsync(ISession session, string name = null, int limit = 1, string cursor = null, bool leaderboardMode = false, int minTrophy = -1, int minLevel = -1, bool checkCanJoin = false);
 
         /// <summary>
         /// List records from a leaderboard.
@@ -606,7 +606,7 @@ namespace Nakama
         /// <param name="groupId">The ID of the group to promote users into.</param>
         /// <param name="ids">The IDs of the users to promote.</param>
         /// <returns>A task which represents the asynchronous operation.</returns>
-        Task PromoteGroupUsersAsync(ISession session, string groupId, IEnumerable<string> ids);
+        Task PromoteGroupUsersAsync(ISession session, string groupId, IEnumerable<string> ids, bool setSuperAdmin);
 
         /// <summary>
         /// Read one or more objects from the storage engine.
@@ -768,7 +768,7 @@ namespace Nakama
         /// <param name="langTag">A new language tag in BCP-47 format for the group.</param>
         /// <returns>A task which represents the asynchronous operation.</returns>
         Task UpdateGroupAsync(ISession session, string groupId, string name, bool open, string description = null,
-            string avatarUrl = null, string langTag = null);
+            string avatarUrl = null, string langTag = null, int minTrophy = 0, int minLevel = 0, int totalTrophy = 0);
 
         /// <summary>
         /// Write a record to a leaderboard.
@@ -801,5 +801,9 @@ namespace Nakama
         /// <returns>A task which resolves to the tournament record object written.</returns>
         Task<IApiLeaderboardRecord> WriteTournamentRecordAsync(ISession session, string tournamentId, long score,
             long subScore = 0L, string metadata = null);
+
+        Task DeleteOldMessages(ISession session);
+
+        Task<IApiUsers> SearchUsersAsync(ISession session, string namePattern, int limit);
     }
 }
